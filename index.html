@@ -1,0 +1,102 @@
+<style>
+  /* 這裡的 CSS 負責美化排版 */
+  .contact-form {
+    max-width: 400px; /* 限制寬度，讓它在電腦上看不會太寬 */
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-group {
+    margin-bottom: 15px; /* 每個欄位之間的距離 */
+  }
+
+  .form-group label {
+    display: block; /* 讓標題獨立一行 */
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input, 
+  .form-group textarea {
+    width: 100%; /* 寬度填滿 */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* 圓角 */
+    box-sizing: border-box; /* 防止寬度爆出去 */
+  }
+
+  .form-group textarea {
+    height: 100px; /* 設定留言框高度 */
+    resize: vertical; /* 允許垂直拉長，但不允許水平拉寬 */
+  }
+
+  button {
+    background-color: #0073b1; /* LinkedIn 風格的藍色 */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background-color: #005582; /* 滑鼠移上去變深色 */
+  }
+</style>
+
+<div class="contact-form">
+  <form id="my-form" action="https://formspree.io/f/mdaanbpk" method="POST">
+    
+    <div class="form-group">
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" name="email" placeholder="example@email.com" required>
+    </div>
+
+    <div class="form-group">
+      <label for="message">Your Message:</label>
+      <textarea id="message" name="message" placeholder="Write something..." required></textarea>
+    </div>
+
+    <button type="submit" id="submit-button">Send Message</button>
+    <p id="status"></p> </form>
+</div>
+
+<script>
+  var form = document.getElementById("my-form");
+  
+  async function handleSubmit(event) {
+    event.preventDefault();
+    var status = document.getElementById("status");
+    var data = new FormData(event.target);
+    var button = document.getElementById("submit-button");
+
+    button.disabled = true;
+    status.innerHTML = "Sending...";
+
+    fetch(event.target.action, {
+      method: form.method,
+      body: data,
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        status.innerHTML = "Success! Redirecting to LinkedIn...";
+        // 成功後，由 JavaScript 強制跳轉
+        window.location.href = "https://www.linkedin.com/in/yishengchen112358";
+      } else {
+        response.json().then(data => {
+          if (Object.hasOwn(data, 'errors')) {
+            status.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+          } else {
+            status.innerHTML = "Oops! There was a problem submitting your form";
+          }
+        })
+      }
+    }).catch(error => {
+      status.innerHTML = "Oops! There was a problem submitting your form";
+    });
+  }
+  form.addEventListener("submit", handleSubmit)
+</script>
